@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd . && git status --porcelain | grep -q . && git add -A && git commit -m \"auto: Claude session $(date '+%Y-%m-%d %H:%M')\" && git push origin HEAD 2>/dev/null || true",
+            "timeout": 30,
+            "statusMessage": "Pushing to GitHub..."
+          }
+        ]
+      }
+    ]
+  }
+}
