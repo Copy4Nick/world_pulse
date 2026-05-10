@@ -124,7 +124,7 @@ function getSunDirection() {
 }
 
 
-export default function GlobeView({ situations, filter, onSelect, selected }) {
+export default function GlobeView({ situations, filter, onSelect, selected, compact }) {
   const mountRef = useRef(null);
   const globeRef = useRef(null);
 
@@ -251,5 +251,5 @@ export default function GlobeView({ situations, filter, onSelect, selected }) {
     }, 400);
   }, [selected]);
 
-  return <div ref={mountRef} style={{ width: '100%', height: '100%' }} />;
+  return <div ref={mountRef} style={{ width: '100%', height: '100%', transition: 'width 0.4s ease' }} />;
 }

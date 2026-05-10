@@ -1,15 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import GlobeView from './components/GlobeView';
 import Sidebar from './components/Sidebar';
+import DetailPanel from './components/DetailPanel';
 
-const POLL_INTERVAL = 10 * 60 * 1000; // 10 min
+const POLL_INTERVAL = 10 * 60 * 1000;
 
 export default function App() {
   const [filter, setFilter] = useState('all');
   const [selected, setSelected] = useState(null);
+  const [panelOpen, setPanelOpen] = useState(false);
   const [clock, setClock] = useState('');
   const [situations, setSituations] = useState([]);
-  const [status, setStatus] = useState('loading'); // 'loading' | 'ok' | 'error'
+  const [status, setStatus] = useState('loading');
   const [fetchedAt, setFetchedAt] = useState(null);
 
   useEffect(() => {
@@ -51,8 +53,18 @@ export default function App() {
     loadSituations();
   };
 
+  const handleSelect = (sit) => {
+    setSelected(sit);
+    setPanelOpen(!!sit);
+  };
+
+  const handleClosePanel = () => {
+    setPanelOpen(false);
+    setSelected(null);
+  };
+
   return (
-    <div className="app">
+    <div className={`app${panelOpen ? ' panel-open' : ''}`}>
       <header>
         <div className="logo">
           <div className="logo-pulse" />
@@ -72,13 +84,9 @@ export default function App() {
             </div>
           )}
           {status === 'error' && (
-            <div className="live-badge" style={{ color: '#ef4444' }}>
-              ошибка
-            </div>
+            <div className="live-badge" style={{ color: '#ef4444' }}>ошибка</div>
           )}
-          <button className="refresh-btn" onClick={handleRefresh} title="Обновить данные">
-            ↻
-          </button>
+          <button className="refresh-btn" onClick={handleRefresh} title="Обновить данные">↻</button>
           <div className="clock">{clock}</div>
         </div>
       </header>
@@ -88,7 +96,8 @@ export default function App() {
           situations={situations}
           filter={filter}
           selected={selected}
-          onSelect={setSelected}
+          onSelect={handleSelect}
+          compact={panelOpen}
         />
       </div>
 
@@ -97,8 +106,15 @@ export default function App() {
         filter={filter}
         setFilter={setFilter}
         selected={selected}
-        onSelect={setSelected}
+        onSelect={handleSelect}
         fetchedAt={fetchedAt}
+      />
+
+      <DetailPanel
+        situation={selected}
+        situations={situations}
+        onClose={handleClosePanel}
+        onSelect={handleSelect}
       />
 
       <div className="legend">
