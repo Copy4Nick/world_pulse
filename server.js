@@ -60,6 +60,13 @@ app.get('/api/situations', async (req, res) => {
       }
     }
 
+    // Sort: breaking events first (by scale desc), then ongoing (by scale desc)
+    situations.sort((a, b) => {
+      if (a.breaking && !b.breaking) return -1;
+      if (!a.breaking && b.breaking) return 1;
+      return (b.scale ?? 0) - (a.scale ?? 0);
+    });
+
     listCache = { data: situations, fetchedAt: now };
     res.json({ situations, cached: false, fetchedAt: now });
   } catch (err) {

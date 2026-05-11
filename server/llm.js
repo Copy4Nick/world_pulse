@@ -47,32 +47,37 @@ export async function analyzeWithLLM(articles) {
 
   const prompt = `You are a senior geopolitical analyst. Today: ${new Date().toISOString().slice(0, 10)}.
 
-TASK: Produce exactly 15 active global situations that matter right now.
+TASK: Produce 10–25 active global situations in two categories:
 
-Known permanent situations (always include all of them, update with latest news):
+CATEGORY 1 — ONGOING (breaking: false):
+All 10 permanent conflicts listed below. Always include every one.
 ${KNOWN_SLUGS.join(', ')}
 
-You may add up to 5 NEW situations from today's news if they are globally significant.
+CATEGORY 2 — BREAKING (breaking: true):
+Up to 15 situations driven by TODAY's news: new crises, sudden escalations, disasters, coups, major attacks.
+Only include if genuinely newsworthy in the last 48h. Can be 0 if nothing significant.
 
 For each situation output a JSON object:
 {
-  "id": <1–15>,
-  "slug": <kebab-case, use existing slug for known situations>,
+  "id": <sequential number>,
+  "slug": <kebab-case; use exact existing slug for known situations>,
   "type": <"conflict"|"protest"|"nature"|"economic"|"political">,
   "name": <short name in Russian, max 30 chars>,
   "lat": <latitude>,
   "lng": <longitude>,
-  "scale": <0.0–1.0>,
-  "duration": <in Russian: "3 года", "6 мес.", "активен">,
-  "desc": <one line in Russian, max 70 chars>,
+  "scale": <0.0–1.0, human impact × global significance>,
+  "duration": <in Russian: "3 года", "6 мес.", "2 дня", "сегодня">,
+  "desc": <one punchy line in Russian, max 70 chars>,
   "summary": <3–4 sentences in Russian — what's happening NOW, why it matters>,
-  "effects": [<3 specific consequences in Russian>]
+  "effects": [<3 specific consequences in Russian>],
+  "breaking": <true for category 2, false for category 1>
 }
 
 Hard rules:
-- Exactly 15 items total
+- All 10 permanent situations must be included (breaking: false)
+- Breaking situations: only from last 48h, must have actual news signal
 - No two items at the same location
-- Use the exact known slugs for permanent situations
+- Use exact known slugs for permanent situations; new slugs for breaking events
 - Output ONLY the raw JSON array, no markdown
 
 NEWS SIGNALS:
