@@ -97,9 +97,12 @@ app.get('/api/situations/:slug', async (req, res) => {
 
     const detail = await generateSituationDetail(situation, wikiData?.extract, recentArticles);
 
-    const news = recentArticles.slice(0, 6).map(a => ({
+    const newsRu = detail.newsRu ?? [];
+    const news = recentArticles.slice(0, 6).map((a, i) => ({
       time:   relativeTime(a.pubDate),
-      text:   a.title + (a.snippet ? '. ' + a.snippet : ''),
+      text:   newsRu[i]
+        ? newsRu[i].title + (newsRu[i].snippet ? '. ' + newsRu[i].snippet : '')
+        : a.title + (a.snippet ? '. ' + a.snippet : ''),
       source: a.source,
       url:    a.url,
     }));
@@ -108,10 +111,10 @@ app.get('/api/situations/:slug', async (req, res) => {
       ...situation,
       news,
       photos,
-      history:   detail.history,
-      timeline:  detail.timeline,
-      stats:     detail.stats,
-      outlook:   detail.outlook,
+      history:   Array.isArray(detail.history) ? detail.history.join('\n\n') : (detail.history ?? ''),
+      timeline:  detail.timeline ?? [],
+      stats:     detail.stats ?? {},
+      outlook:   Array.isArray(detail.outlook) ? detail.outlook.join('\n\n') : (detail.outlook ?? ''),
       related:   detail.related ?? [],
       fetchedAt: now,
     };

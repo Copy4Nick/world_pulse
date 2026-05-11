@@ -114,7 +114,8 @@ Output a JSON object with these exact fields:
   "timeline": <array of { "year": string, "title": string (max 60 chars), "desc": string (1–2 sentences), "major": boolean }. Variable length 4–12 items depending on how much history exists. major=true for watershed moments>,
   "stats": <object with 3–4 key metrics, keys and values in Russian. Example: { "Погибших": "~200K", "Беженцев": "6.7M", "Длина фронта": "~1000 км" }>,
   "outlook": <2 paragraphs in Russian about likely scenarios and risk factors>,
-  "related": <array of 2–4 slugs from this list that are thematically connected: ${KNOWN_SLUGS.join(', ')}>
+  "related": <array of 2–4 slugs from this list that are thematically connected: ${KNOWN_SLUGS.join(', ')}>,
+  "newsRu": <array of translated news items — same length as the input news array. Each item: { "title": string (translated headline in Russian, max 120 chars), "snippet": string (translated lead in Russian, max 200 chars) }>
 }
 
 Rules:

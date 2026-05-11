@@ -199,12 +199,19 @@ export default function GlobeView({ situations, filter, onSelect, selected, comp
       sunUniform.value = getSunDirection();
     }, 60_000);
 
+    let resizeTimer;
     const ro = new ResizeObserver(() => {
-      g.width(el.offsetWidth).height(el.offsetHeight);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        if (w > 10 && h > 10) g.width(w).height(h);
+      }, 60);
     });
     ro.observe(el);
 
     return () => {
+      clearTimeout(resizeTimer);
       clearInterval(sunTimer);
       ro.disconnect();
       bordersTexture.dispose();
